@@ -2161,6 +2161,15 @@ static int64_t http_seek_internal(URLContext *h, int64_t off, int whence, int fo
             }
             remaining -= ret;
         }
+
+        ret = http_open_cnx(h, &options);
+        if (ret >= 0) {
+            goto done;
+        } else {
+            /* fall back to normal reconnection */
+            ffurl_closep(&s->hd);
+            old_hd = NULL;
+        }
     } else {
         /* can't soft seek; always open new connection */
         old_hd = s->hd;
@@ -2179,6 +2188,8 @@ static int64_t http_seek_internal(URLContext *h, int64_t off, int whence, int fo
         av_dict_free(&options);
         return ret;
     }
+
+done:
     av_dict_free(&options);
     ffurl_close(old_hd);
     return off;

@@ -249,6 +249,29 @@ static int FUNC_H266(name) args
 
 
 
+#if CONFIG_CBS_BVC2
+/* BVC2 原生拆包基于 librempeg / wxyzh/ffmpeg-bvc2 的 GPLv3 补丁。
+ * 参数集和视频包都保留四字节长度前缀，不转换 Annex B，也不解析 VVCC。 */
+static int cbs_bvc2_split_fragment(CodedBitstreamContext *ctx,
+                                 CodedBitstreamFragment *frag,
+                                 int header)
+{
+    CodedBitstreamH266Context *priv = ctx->priv_data;
+    CodedBitstreamH2645Context *h2645 = &priv->common;
+    const int flags = H2645_FLAG_IS_NALFF | H2645_FLAG_SMALL_PADDING | H2645_FLAG_USE_REF;
+    int err;
+
+    h2645->nal_length_size = 4;
+    err = ff_h2645_packet_split(&h2645->read_packet,
+                               frag->data, frag->data_size, ctx->log_ctx,
+                               h2645->nal_length_size, AV_CODEC_ID_BVC2, flags);
+    if (err < 0)
+        return err;
+
+    return ff_cbs_h2645_fragment_add_nals(ctx, frag, &h2645->read_packet);
+}
+#endif
+
 static int cbs_h266_split_fragment(CodedBitstreamContext *ctx,
                                    CodedBitstreamFragment *frag,
                                    int header)
@@ -807,3 +830,21 @@ const CodedBitstreamType ff_cbs_type_h266 = {
     .flush             = &cbs_h266_flush,
     .close             = &cbs_h266_close,
 };
+
+#if CONFIG_CBS_BVC2
+const CodedBitstreamType ff_cbs_type_bvc2 = {
+    .codec_id          = AV_CODEC_ID_BVC2,
+
+    .priv_data_size    = sizeof(CodedBitstreamH266Context),
+
+    .unit_types        = cbs_h266_unit_types,
+
+    .split_fragment    = &cbs_bvc2_split_fragment,
+    .read_unit         = &cbs_h266_read_nal_unit,
+    .write_unit        = &cbs_h266_write_nal_unit,
+    .assemble_fragment = &ff_cbs_h2645_assemble_fragment,
+
+    .flush             = &cbs_h266_flush,
+    .close             = &cbs_h266_close,
+};
+#endif

@@ -333,7 +333,7 @@ int ff_cbs_h2645_unit_requires_zero_byte(enum AVCodecID codec_id,
         return type == H264_NAL_SPS || type == H264_NAL_PPS;
     if (codec_id == AV_CODEC_ID_HEVC)
         return type == HEVC_NAL_VPS || type == HEVC_NAL_SPS || type == HEVC_NAL_PPS;
-    if (codec_id == AV_CODEC_ID_VVC)
+    if (codec_id == AV_CODEC_ID_VVC || codec_id == AV_CODEC_ID_BVC2)
         return type >= VVC_OPI_NUT && type <= VVC_SUFFIX_APS_NUT;
     return 0;
 }

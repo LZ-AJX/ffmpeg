@@ -123,6 +123,7 @@ const AVCodecTag ff_codec_movvideo_tags[] = {
 
     { AV_CODEC_ID_RAWVIDEO, MKTAG('W', 'R', 'A', 'W') },
 
+    { AV_CODEC_ID_BVC2, MKTAG('b', 'v', 'c', '2') },
     { AV_CODEC_ID_VVC,  MKTAG('v', 'v', 'c', '1') },
     { AV_CODEC_ID_VVC,  MKTAG('v', 'v', 'i', '1') },
 

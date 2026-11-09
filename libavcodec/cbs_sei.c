@@ -687,6 +687,7 @@ const SEIMessageTypeDescriptor *ff_cbs_sei_find_type(CodedBitstreamContext *ctx,
         codec_list = ff_cbs_sei_h265_types;
         break;
 #endif
+    case AV_CODEC_ID_BVC2:
     case AV_CODEC_ID_H266:
         codec_list = cbs_sei_h274_types;
         break;

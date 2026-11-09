@@ -2009,6 +2009,14 @@ static const AVCodecDescriptor codec_descriptors[] = {
                      AV_CODEC_PROP_LOSSLESS,
         .mime_types= MT("image/jxs"),
     },
+    {
+        .id        = AV_CODEC_ID_BVC2,
+        .type      = AVMEDIA_TYPE_VIDEO,
+        .name      = "bvc2",
+        .long_name = NULL_IF_CONFIG_SMALL("ByteVC2"),
+        .props     = AV_CODEC_PROP_LOSSY | AV_CODEC_PROP_REORDER,
+        .profiles  = NULL_IF_CONFIG_SMALL(ff_vvc_profiles),
+    },
 
     /* various PCM "codecs" */
     {
